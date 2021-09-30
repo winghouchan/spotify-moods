@@ -1,3 +1,4 @@
+import { mean, median, mode } from "mathjs";
 import * as Spotify from "spotify-web-api-node";
 
 const spotify = new Spotify();
@@ -18,14 +19,25 @@ async function main() {
   );
   const recentlyPlayedTracksWithAudioFeatures = recentlyPlayedTracks.map(
     (playHistory) => ({
-    ...playHistory,
+      ...playHistory,
       audio_features: deduplicatedRecentlyPlayedTrackFeatures.find(
         ({ id }) => id === playHistory.track.id
       ),
     })
   );
+  const recentlyPlayedTracksValence = recentlyPlayedTracksWithAudioFeatures.map(
+    ({ audio_features: { valence } }) => valence
+  );
 
-  return recentlyPlayedTracksWithAudioFeatures;
+  const stats = {
+    mean: mean(recentlyPlayedTracksValence),
+    median: median(recentlyPlayedTracksValence),
+    mode: mode(recentlyPlayedTracksValence),
+  };
+
+  console.log(stats);
+
+  return stats;
 }
 
 main();
