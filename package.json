@@ -1,6 +1,9 @@
 {
   "name": "spotify-moods",
   "version": "0.1.0",
+  "dependencies": {
+    "dotenv": "^10.0.0"
+  },
   "devDependencies": {
     "ts-node-dev": "^1.1.8",
     "typescript": "^4.4.3"
