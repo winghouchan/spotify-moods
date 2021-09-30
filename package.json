@@ -2,7 +2,8 @@
   "name": "spotify-moods",
   "version": "0.1.0",
   "dependencies": {
-    "dotenv": "^10.0.0"
+    "dotenv": "^10.0.0",
+    "spotify-web-api-node": "^5.0.2"
   },
   "devDependencies": {
     "ts-node-dev": "^1.1.8",
