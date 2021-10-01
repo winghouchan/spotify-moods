@@ -1,2 +1,5 @@
 .env
+.firebase
+*.log
 node_modules
+serviceAccountKey.json
