@@ -3,9 +3,7 @@
     "rules": "database.rules.json"
   },
   "functions": {
-    "predeploy": [
-      "yarn --cwd \"$RESOURCE_DIR\" run build"
-    ],
+    "predeploy": ["yarn --cwd \"$RESOURCE_DIR\" run build"],
     "source": "functions"
   },
   "emulators": {
@@ -26,12 +24,9 @@
     }
   },
   "hosting": {
-    "public": "web",
-    "ignore": [
-      "firebase.json",
-      "**/.*",
-      "**/node_modules/**"
-    ],
+    "predeploy": ["yarn --cwd \"$RESOURCE_DIR\" run build"],
+    "public": "web/build",
+    "ignore": ["firebase.json", "**/.*", "**/node_modules/**"],
     "rewrites": [
       {
         "source": "**",
