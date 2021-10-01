@@ -1,6 +1,7 @@
 {
   "name": "spotify-moods",
   "version": "0.1.0",
+  "workspaces": ["functions"],
   "dependencies": {
     "@types/mathjs": "^9.4.2",
     "dotenv": "^10.0.0",
