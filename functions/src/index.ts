@@ -1,9 +1,14 @@
-import * as functions from "firebase-functions";
+import admin from "firebase-admin";
+import serviceAccount from "../../serviceAccountKey.json";
 
-// // Start writing Firebase Functions
-// // https://firebase.google.com/docs/functions/typescript
-//
-// export const helloWorld = functions.https.onRequest((request, response) => {
-//   functions.logger.info("Hello logs!", {structuredData: true});
-//   response.send("Hello from Firebase!");
-// });
+if (process.env.NODE_ENV === undefined) {
+  throw new Error("NODE_ENV not defined");
+}
+
+admin.initializeApp({
+  // @ts-ignore
+  credential: admin.credential.cert(serviceAccount),
+  databaseURL: `https://${process.env.GCLOUD_PROJECT}.firebaseio.com`,
+});
+
+export { default as authorize } from "./authorize";
