@@ -8,6 +8,9 @@ module.exports = jest.fn().mockImplementation(
 
     return {
       ...SpotifyApi.prototype,
+
+      authorizationCodeGrant: jest.fn().mockReturnValue({ body: {} }),
+      getMe: jest.fn().mockReturnValue({ body: {} }),
     };
   }.bind(SpotifyApi.prototype)
 );

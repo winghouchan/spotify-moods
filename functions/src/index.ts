@@ -12,3 +12,4 @@ admin.initializeApp({
 });
 
 export { default as authorize } from "./authorize";
+export { default as token } from "./token";
