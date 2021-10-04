@@ -12,4 +12,5 @@ admin.initializeApp({
 });
 
 export { default as authorize } from "./authorize";
+export { default as refreshToken } from "./refreshToken";
 export { default as token } from "./token";
