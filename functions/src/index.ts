@@ -15,3 +15,4 @@ export { default as authorize } from "./authorize";
 export { default as deleteUser } from "./deleteUser";
 export { default as refreshToken } from "./refreshToken";
 export { default as token } from "./token";
+export { default as playHistory } from "./playHistory";

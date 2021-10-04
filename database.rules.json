@@ -1,5 +1,13 @@
 {
   "rules": {
+    "playHistory": {
+      ".indexOn": "refresh_at",
+      "$uid": {
+        ".read": "$uid === auth.uid",
+        ".write": "$uid === auth.uid"
+      }
+    },
+
     "tokens": {
       ".indexOn": "refresh_at",
       "$uid": {
