@@ -1,4 +1,5 @@
 import { deleteUser, getAuth, signOut } from "firebase/auth";
+import { getFunctions, httpsCallable } from "firebase/functions";
 import { useCallback } from "react";
 import { useAuthState } from "./app/auth";
 import { useUser } from "./app/user";
@@ -13,6 +14,13 @@ function Home() {
       console.log("deleted");
     }
   }, [user]);
+  const moods = useCallback(async () => {
+    const fn = httpsCallable(getFunctions(), "stats");
+
+    const result = await fn();
+
+    console.log(result);
+  }, []);
 
   return (
     <div>
@@ -22,6 +30,7 @@ function Home() {
           <p>Signed in</p>
           <button onClick={signOutHandler}>Sign out</button>
           <button onClick={deleteAccountHandler}>Delete me</button>
+          <button onClick={moods}>Moods</button>
         </div>
       )}
       {authState === false && <a href="/authorize">Login with Spotify</a>}
