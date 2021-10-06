@@ -2,6 +2,7 @@ import { initializeApp, getApp } from "@firebase/app";
 import { getAuth, connectAuthEmulator } from "firebase/auth";
 import { getFunctions, connectFunctionsEmulator } from "firebase/functions";
 import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
+import { GeistProvider, CssBaseline } from "@geist-ui/react";
 import { AuthenticatedRoute } from "./app/routing";
 import Authorize from "./Authorize";
 import Home from "./Home";
@@ -27,6 +28,8 @@ if (process.env.NODE_ENV === "development") {
 
 function App() {
   return (
+    <GeistProvider>
+      <CssBaseline />
     <Router>
       <Switch>
         <AuthenticatedRoute path="/authenticated">
@@ -40,6 +43,7 @@ function App() {
         </Route>
       </Switch>
     </Router>
+    </GeistProvider>
   );
 }
 
