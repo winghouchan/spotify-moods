@@ -1,8 +1,10 @@
+import { Card, Code, Grid, Text } from "@geist-ui/react";
 import { getAuth, signInWithCustomToken } from "firebase/auth";
 import { getFunctions, httpsCallable } from "firebase/functions";
 import { useEffect } from "react";
 import { Redirect, useHistory, useLocation } from "react-router-dom";
 import { useAuthState } from "./app/auth";
+import SpotifyLogo from "./SpotifyLogo";
 
 function Authorize() {
   const authState = useAuthState();
@@ -11,9 +13,6 @@ function Authorize() {
   const code = urlParams.get("code");
   const error = urlParams.get("error");
   const clientState = urlParams.get("state");
-
-  const loading =
-    typeof authState === "undefined" || (!code && !error && !clientState);
 
   useEffect(() => {
     if (error) {
@@ -48,14 +47,47 @@ function Authorize() {
   }, [authState, code, error, clientState]);
 
   return (
-    <div>
+    <Grid.Container height={"100%"}>
       {authState && <Redirect to="/" />}
-      <h1>Authorize</h1>
-      {loading && <p>Loading</p>}
-      {error && <p>There was an error: {error}</p>}
-      {code && <p>Here's the code: {code}</p>}
-      {clientState && <p>Here the state: {clientState}</p>}
-    </div>
+      <Grid xs={0} sm={4} md={6}></Grid>
+      <Grid xs={24} sm md justify={"center"} alignItems={"center"}>
+        <Card width={"90%"}>
+          <Grid.Container gap={2} direction={"column"} alignItems={"center"}>
+            <Grid pt={2}>
+              <SpotifyLogo
+                style={{
+                  height: 50,
+                  width: 50,
+                }}
+              />
+            </Grid>
+            <Grid px={1}>
+              {!error && (
+                <Text h1 font={2}>
+                  Authorizing <br /> with Spotify
+                </Text>
+              )}
+              {error && (
+                <>
+                  <Text h1 font={2} style={{ textAlign: "center" }}>
+                    {error === "access_denied"
+                      ? "You did not grant access to your Spotify data"
+                      : "Something went wrong \xa0☹️"}
+                  </Text>
+                </>
+              )}
+            </Grid>
+          </Grid.Container>
+          {error && (
+            <Card.Footer>
+              <Text>Error code:</Text>
+              <Code>{error}</Code>
+            </Card.Footer>
+          )}
+        </Card>
+      </Grid>
+      <Grid xs={0} sm={4} md={6}></Grid>
+    </Grid.Container>
   );
 }
 
