@@ -5,6 +5,7 @@ import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
 import { GeistProvider, CssBaseline } from "@geist-ui/react";
 import { AuthenticatedRoute } from "./app/routing";
 import Authorize from "./Authorize";
+import { Home } from "./home";
 import { ThemeContext, useTheme } from "./app/theme";
 
 initializeApp({
@@ -32,21 +33,21 @@ function App() {
   return (
     <ThemeContext.Provider value={{ theme, toggleTheme }}>
       <GeistProvider themeType={theme}>
-      <CssBaseline />
-    <Router>
-      <Switch>
-        <AuthenticatedRoute path="/authenticated">
-          <div>You should be authenticated</div>
-        </AuthenticatedRoute>
-        <Route path="/authorize">
-          <Authorize />
-        </Route>
-        <Route path="/">
-          <Home />
-        </Route>
-      </Switch>
-    </Router>
-    </GeistProvider>
+        <CssBaseline />
+        <Router>
+          <Switch>
+            <AuthenticatedRoute path="/authenticated">
+              <div>You should be authenticated</div>
+            </AuthenticatedRoute>
+            <Route path="/authorize">
+              <Authorize />
+            </Route>
+            <Route path="/">
+              <Home />
+            </Route>
+          </Switch>
+        </Router>
+      </GeistProvider>
     </ThemeContext.Provider>
   );
 }
