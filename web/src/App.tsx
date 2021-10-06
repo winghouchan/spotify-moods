@@ -5,7 +5,7 @@ import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
 import { GeistProvider, CssBaseline } from "@geist-ui/react";
 import { AuthenticatedRoute } from "./app/routing";
 import Authorize from "./Authorize";
-import Home from "./Home";
+import { ThemeContext, useTheme } from "./app/theme";
 
 initializeApp({
   apiKey: "AIzaSyAXsuR4q-MGmmSmgeSqPD7P-_MLc1rVE60",
@@ -27,8 +27,11 @@ if (process.env.NODE_ENV === "development") {
 }
 
 function App() {
+  const { theme, toggleTheme } = useTheme();
+
   return (
-    <GeistProvider>
+    <ThemeContext.Provider value={{ theme, toggleTheme }}>
+      <GeistProvider themeType={theme}>
       <CssBaseline />
     <Router>
       <Switch>
@@ -44,6 +47,7 @@ function App() {
       </Switch>
     </Router>
     </GeistProvider>
+    </ThemeContext.Provider>
   );
 }
 
