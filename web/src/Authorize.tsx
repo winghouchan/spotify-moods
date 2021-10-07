@@ -41,8 +41,14 @@ function Authorize() {
     }
 
     if (authState === false && !code) {
-      window.location.href =
-        "http://localhost:5001/spotify-moods-0/us-central1/authorize";
+      if (process.env.NODE_ENV === "development") {
+        window.location.href =
+          "http://localhost:5001/spotify-moods-0/us-central1/authorize";
+      } else {
+        const { projectId } = getFunctions().app.options;
+        const { region } = getFunctions();
+        window.location.href = `https://${region}-${projectId}.cloudfunctions.net/authorize`;
+      }
     }
   }, [authState, code, error, clientState]);
 
