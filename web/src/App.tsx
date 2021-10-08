@@ -39,7 +39,7 @@ function App() {
             <AuthenticatedRoute path="/authenticated">
               <div>You should be authenticated</div>
             </AuthenticatedRoute>
-            <Route path="/authorize">
+            <Route path="/signin">
               <Authorize />
             </Route>
             <Route path="/">

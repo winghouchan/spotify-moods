@@ -9,7 +9,7 @@ const spotify = new SpotifyApi({
     (process.env.NODE_ENV === "development" &&
       "https://spotify-moods.localhost:3000/authorize") ||
     (process.env.NODE_ENV === "production" &&
-      `http://${process.env.GCLOUD_PROJECT}.web.app/authorize`) ||
+      `https://${process.env.GCLOUD_PROJECT}.web.app/signin`) ||
     undefined,
 });
 

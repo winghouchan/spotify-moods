@@ -32,6 +32,14 @@
     "ignore": ["firebase.json", "**/.*", "**/node_modules/**"],
     "rewrites": [
       {
+        "source": "/authorize",
+        "function": "authorize"
+      },
+      {
+        "source": "/token",
+        "function": "token"
+      },
+      {
         "source": "**",
         "destination": "/index.html"
       }

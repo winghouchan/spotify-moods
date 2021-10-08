@@ -7,7 +7,7 @@ export default function SignIn() {
   const history = useHistory();
 
   const navigateToAuthorize = useCallback(() => {
-    history.push("/authorize");
+    history.push("/signin");
   }, []);
 
   return (

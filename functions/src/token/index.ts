@@ -49,7 +49,7 @@ const token = https.onRequest((request, response) => {
 
     if (
       typeof request.query.code === "string" ||
-      typeof request.body?.data.code === "string"
+      typeof request.body?.data?.code === "string"
     ) {
       const authorizationCodeGrantData = await getSpotifyTokens(
         request.query.code || request.body.data.code

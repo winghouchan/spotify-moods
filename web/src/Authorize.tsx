@@ -1,7 +1,7 @@
 import { Card, Code, Grid, Text } from "@geist-ui/react";
 import { getAuth, signInWithCustomToken } from "firebase/auth";
-import { getFunctions, httpsCallable } from "firebase/functions";
-import { useEffect } from "react";
+import { getFunctions } from "firebase/functions";
+import { useCallback, useEffect } from "react";
 import { Redirect, useHistory, useLocation } from "react-router-dom";
 import { useAuthState } from "./app/auth";
 import SpotifyLogo from "./SpotifyLogo";
@@ -14,17 +14,26 @@ function Authorize() {
   const error = urlParams.get("error");
   const clientState = urlParams.get("state");
 
+  const token = useCallback(async (data) => {
+    const { projectId } = getFunctions().app.options;
+
+    return await (
+      await fetch(`https://${projectId}.web.app/token`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ data }),
+      })
+    ).json();
+  }, []);
+
   useEffect(() => {
     if (error) {
       return;
     }
 
     if (authState === false && code && clientState) {
-      const token = httpsCallable<
-        { code: string; state: string },
-        { token: string }
-      >(getFunctions(), "token");
-
       token({
         code,
         state: clientState,
@@ -46,8 +55,7 @@ function Authorize() {
           "http://localhost:5001/spotify-moods-0/us-central1/authorize";
       } else {
         const { projectId } = getFunctions().app.options;
-        const { region } = getFunctions();
-        window.location.href = `https://${region}-${projectId}.cloudfunctions.net/authorize`;
+        window.location.href = `https://${projectId}.web.app/authorize`;
       }
     }
   }, [authState, code, error, clientState]);
