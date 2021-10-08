@@ -1,6 +1,6 @@
-import admin from "firebase-admin";
 import * as functions from "firebase-functions";
 import spotify from "../spotify";
+import queryUsersForSpotifyTokenRefresh from "./queryUsersForSpotifyTokenRefresh";
 import revokeTokens from "./revokeTokens";
 import updateSpotifyAccessTokens from "./updateSpotifyTokens";
 
@@ -9,24 +9,10 @@ import updateSpotifyAccessTokens from "./updateSpotifyTokens";
  *
  * @see https://developer.spotify.com/documentation/general/guides/authorization-guide/#4-requesting-a-refreshed-access-token-spotify-returns-a-new-access-token-to-your-app
  */
-const refreshToken = functions.pubsub
+ const refreshToken = functions.pubsub
   .schedule("every 1 minutes")
   .onRun(async () => {
-    functions.logger.log("Getting Spotify token records that need refreshing");
-
-    const data = await admin
-      .database()
-      .ref("tokens")
-      .orderByChild("refresh_at")
-      .endAt(Date.now())
-      .once("value");
-    const tokenRecords = Object.entries<
-      Awaited<ReturnType<typeof spotify.authorizationCodeGrant>>["body"]
-    >(data.val() || {});
-
-    functions.logger.log(
-      `Found ${tokenRecords.length} Spotify token records that need refreshing`
-    );
+  const tokenRecords = await queryUsersForSpotifyTokenRefresh();
 
     if (tokenRecords.length > 0) {
       await Promise.all(
