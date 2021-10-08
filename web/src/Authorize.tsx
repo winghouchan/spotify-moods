@@ -18,13 +18,18 @@ function Authorize() {
     const { projectId } = getFunctions().app.options;
 
     return await (
-      await fetch(`https://${projectId}.web.app/token`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ data }),
-      })
+      await fetch(
+        process.env.NODE_ENV === "development"
+          ? "http://localhost:5001/spotify-moods-0/us-central1/token"
+          : `https://${projectId}.web.app/token`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ data }),
+        }
+      )
     ).json();
   }, []);
 

@@ -13,6 +13,17 @@ import updateOrCreateUser from "./updateOrCreateUser";
  * @see https://developer.spotify.com/documentation/general/guides/authorization-guide/#2-have-your-application-request-refresh-and-access-tokens-spotify-returns-access-and-refresh-tokens
  */
 const token = https.onRequest((request, response) => {
+  if (process.env.NODE_ENV === "development") {
+    response.set(
+      "Access-Control-Allow-Origin",
+      "https://spotify-moods.localhost:3000"
+    );
+  } else {
+    response.set(
+      "Access-Control-Allow-Origin",
+      "https://spotify-moods-0.web.app"
+    );
+  }
 
   if (request.method === "OPTIONS") {
     // Send response to OPTIONS requests
@@ -20,6 +31,7 @@ const token = https.onRequest((request, response) => {
     response.set("Access-Control-Allow-Headers", "Content-Type");
     response.set("Access-Control-Max-Age", "3600");
     response.status(204).send("");
+    return;
   }
 
   cookieParser()(request, response, async () => {

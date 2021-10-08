@@ -7,7 +7,7 @@ const spotify = new SpotifyApi({
   clientSecret: functions.config().spotify.client_secret,
   redirectUri:
     (process.env.NODE_ENV === "development" &&
-      "https://spotify-moods.localhost:3000/authorize") ||
+      "https://spotify-moods.localhost:3000/signin") ||
     (process.env.NODE_ENV === "production" &&
       `https://${process.env.GCLOUD_PROJECT}.web.app/signin`) ||
     undefined,
