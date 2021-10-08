@@ -6,6 +6,7 @@ import buildPlayHistoryWithAudioFeaturesUpdateObject from "./buildPlayHistoryWit
 import deduplicateRecentlyPlayedTrackIds from "./deduplicateRecentlyPlayedTrackIds";
 import getAudioFeatures from "./getAudioFeatures";
 import getMyRecentlyPlayedTracks from "./getRecentlyPlayedTracks";
+import queryUsersForHistoryRefresh from "./queryUsersForHistoryRefresh";
 import updatePlayHistory from "./updatePlayHistory";
 
 export type PlayHistoryWithAudioFeatures = SpotifyApi.PlayHistoryObject & {
@@ -29,12 +30,7 @@ export interface UserPlayHistoryObject {
 const playHistory = functions.pubsub
   .schedule("every 1 minutes")
   .onRun(async () => {
-    const data = await admin
-      .database()
-      .ref("playHistory")
-      .orderByChild("refresh_at")
-      .endAt(Date.now())
-      .once("value");
+    const data = await queryUsersForHistoryRefresh();
 
     const records = Object.entries<UserPlayHistoryObject>(data.val() || {});
 
