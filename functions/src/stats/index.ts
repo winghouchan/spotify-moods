@@ -67,7 +67,7 @@ const stats = https.onCall(async (data: RequestData | null, context) => {
     });
 
     if (playHistory) {
-      logger.log("Calculating statistics");
+      logger.info("Calculating statistics");
 
       const valence = Object.values<PlayHistoryWithAudioFeatures>(playHistory)
         .map(({ audio_features }) => audio_features?.valence)
@@ -118,12 +118,12 @@ const stats = https.onCall(async (data: RequestData | null, context) => {
         };
       }
 
-      logger.log("Successfully calculated statistics");
+      logger.info("Successfully calculated statistics");
 
       return { period: periodStats };
     }
 
-    logger.log("No play history found");
+    logger.info("No play history found");
   }
 
   return { period: {}, interval: [] };

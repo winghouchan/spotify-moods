@@ -1,5 +1,5 @@
 import cookieParser from "cookie-parser";
-import * as functions from "firebase-functions";
+import { https, logger } from "firebase-functions";
 import spotify from "../spotify";
 import createToken from "./createToken";
 import getSpotifyTokens from "./getSpotifyTokens";
@@ -12,8 +12,7 @@ import updateOrCreateUser from "./updateOrCreateUser";
  *
  * @see https://developer.spotify.com/documentation/general/guides/authorization-guide/#2-have-your-application-request-refresh-and-access-tokens-spotify-returns-access-and-refresh-tokens
  */
-const token = functions.https.onRequest((request, response) => {
-  response.set("Access-Control-Allow-Origin", "*");
+const token = https.onRequest((request, response) => {
 
   if (request.method === "OPTIONS") {
     // Send response to OPTIONS requests
@@ -32,7 +31,7 @@ const token = functions.https.onRequest((request, response) => {
             "State cookie not set or expired. Maybe you took too long to authorize. Please try again.",
         };
 
-        functions.logger.info("Access token requested without state cookie");
+        logger.info("Access token requested without state cookie");
         return response.status(error.status).json(error);
       } else if (
         request.cookies.state !== request.query?.state &&
@@ -43,9 +42,7 @@ const token = functions.https.onRequest((request, response) => {
           message: "State validation failed.",
         };
 
-        functions.logger.info(
-          "Access token requested but state validation failed"
-        );
+        logger.info("Access token requested but state validation failed");
         return response.status(error.status).json(error);
       }
     }
@@ -82,7 +79,7 @@ const token = functions.https.onRequest((request, response) => {
         message: "Code query parameter invalid or missing.",
       };
 
-      functions.logger.info(
+      logger.info(
         "Token requested but code query parameter invalid or missing"
       );
       return response.status(error.status).json(error);

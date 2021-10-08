@@ -1,4 +1,4 @@
-import * as functions from "firebase-functions";
+import { logger, pubsub } from "firebase-functions";
 import spotify from "../spotify";
 import queryUserSpotifyAccessToken from "../utils/queryUserSpotifyAccessToken";
 import addAudioFeaturesToRecentlyPlayedTracks from "./addAudioFeaturesToRecentlyPlayedTracks";
@@ -27,60 +27,56 @@ export interface UserPlayHistoryObject {
  * @see https://developer.spotify.com/documentation/web-api/reference/#endpoint-get-recently-played
  * @see https://developer.spotify.com/documentation/web-api/reference/#endpoint-get-several-audio-features
  */
-const playHistory = functions.pubsub
-  .schedule("every 1 minutes")
-  .onRun(async () => {
-    const data = await queryUsersForHistoryRefresh();
+const playHistory = pubsub.schedule("every 1 minutes").onRun(async () => {
+  const data = await queryUsersForHistoryRefresh();
 
-    const records = Object.entries<UserPlayHistoryObject>(data.val() || {});
+  const records = Object.entries<UserPlayHistoryObject>(data.val() || {});
 
-    if (records.length > 0) {
-      functions.logger.log(`Updating play history for ${records.length} users`);
+  if (records.length > 0) {
+    logger.info(`Updating play history for ${records.length} users`);
 
-      await Promise.all(
-        records.map(async ([user, { cursor }]) => {
-          const access_token = await queryUserSpotifyAccessToken(user);
+    await Promise.all(
+      records.map(async ([user, { cursor }]) => {
+        const access_token = await queryUserSpotifyAccessToken(user);
 
-          spotify.setAccessToken(access_token);
+        spotify.setAccessToken(access_token);
 
-          const recentlyPlayedTracks = await getMyRecentlyPlayedTracks(cursor);
+        const recentlyPlayedTracks = await getMyRecentlyPlayedTracks(cursor);
 
-          if (recentlyPlayedTracks.length > 0) {
-            const deduplicatedRecentlyPlayedTrackIds =
-              deduplicateRecentlyPlayedTrackIds(recentlyPlayedTracks);
+        if (recentlyPlayedTracks.length > 0) {
+          const deduplicatedRecentlyPlayedTrackIds =
+            deduplicateRecentlyPlayedTrackIds(recentlyPlayedTracks);
 
-            const deduplicatedRecentlyPlayedTrackFeatures =
-              await getAudioFeatures(deduplicatedRecentlyPlayedTrackIds);
+          const deduplicatedRecentlyPlayedTrackFeatures =
+            await getAudioFeatures(deduplicatedRecentlyPlayedTrackIds);
 
-            const recentlyPlayedTracksWithAudioFeaturesArray =
-              addAudioFeaturesToRecentlyPlayedTracks(
-                recentlyPlayedTracks,
-                deduplicatedRecentlyPlayedTrackFeatures
-              ).sort(
-                (a, b) => Date.parse(a.played_at) - Date.parse(b.played_at)
-              );
+          const recentlyPlayedTracksWithAudioFeaturesArray =
+            addAudioFeaturesToRecentlyPlayedTracks(
+              recentlyPlayedTracks,
+              deduplicatedRecentlyPlayedTrackFeatures
+            ).sort((a, b) => Date.parse(a.played_at) - Date.parse(b.played_at));
 
-            const playHistoryWithAudioFeaturesUpdateObject =
-              buildPlayHistoryWithAudioFeaturesUpdateObject(
-                recentlyPlayedTracksWithAudioFeaturesArray
-              );
-
-            const lastPlayed =
-              recentlyPlayedTracksWithAudioFeaturesArray[
-                recentlyPlayedTracksWithAudioFeaturesArray.length - 1
-              ].played_at;
-
-            updatePlayHistory(
-              user,
-              lastPlayed,
-              playHistoryWithAudioFeaturesUpdateObject
+          const playHistoryWithAudioFeaturesUpdateObject =
+            buildPlayHistoryWithAudioFeaturesUpdateObject(
+              recentlyPlayedTracksWithAudioFeaturesArray
             );
-          }
-        })
-      );
-    } else {
-      functions.logger.log("No users require play history updates");
-    }
-  });
+
+          const lastPlayed =
+            recentlyPlayedTracksWithAudioFeaturesArray[
+              recentlyPlayedTracksWithAudioFeaturesArray.length - 1
+            ].played_at;
+
+          await updatePlayHistory(
+            user,
+            lastPlayed,
+            playHistoryWithAudioFeaturesUpdateObject
+          );
+        }
+      })
+    );
+  } else {
+    logger.info("No users require play history updates");
+  }
+});
 
 export default playHistory;
