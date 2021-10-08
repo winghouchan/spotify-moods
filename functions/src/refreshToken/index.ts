@@ -2,6 +2,7 @@ import admin from "firebase-admin";
 import * as functions from "firebase-functions";
 import spotify from "../spotify";
 import revokeTokens from "./revokeTokens";
+import updateSpotifyAccessTokens from "./updateSpotifyTokens";
 
 /**
  * Refreshes Spotify access token
@@ -43,16 +44,7 @@ const refreshToken = functions.pubsub
               "Successfully requested new Spotify access token, updating Spotify token record"
             );
 
-            await admin
-              .database()
-              .ref(`/tokens/${userId}`)
-              .update({
-                ...refreshAccessTokenData,
-                refresh_at:
-                  Date.now() + refreshAccessTokenData.expires_in * 1000,
-              });
-
-            functions.logger.log("Successfully updated token record");
+          await updateSpotifyAccessTokens(userId, refreshAccessTokenData);
           } catch (error: any) {
             if (error.body?.error === "invalid_grant") {
               functions.logger.log(
