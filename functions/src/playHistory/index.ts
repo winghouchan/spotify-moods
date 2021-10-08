@@ -13,11 +13,8 @@ export type PlayHistoryWithAudioFeatures = SpotifyApi.PlayHistoryObject & {
   audio_features?: SpotifyApi.AudioFeaturesObject;
 };
 
-export interface UserPlayHistoryObject {
+interface UserFetchHistoryObject {
   cursor?: number;
-  history?: {
-    [key: string]: PlayHistoryWithAudioFeatures;
-  };
   refresh_at?: number;
 }
 
@@ -30,7 +27,7 @@ export interface UserPlayHistoryObject {
 const playHistory = pubsub.schedule("every 1 minutes").onRun(async () => {
   const data = await queryUsersForHistoryRefresh();
 
-  const records = Object.entries<UserPlayHistoryObject>(data.val() || {});
+  const records = Object.entries<UserFetchHistoryObject>(data.val() || {});
 
   if (records.length > 0) {
     logger.info(`Updating play history for ${records.length} users`);

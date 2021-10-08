@@ -6,8 +6,7 @@ export default function buildPlayHistoryWithAudioFeaturesUpdateObject(
   return array.reduce(
     (accumulator, recentlyPlayedTrack) => ({
       ...accumulator,
-      [`history/${Date.parse(recentlyPlayedTrack.played_at)}`]:
-        recentlyPlayedTrack,
+      [Date.parse(recentlyPlayedTrack.played_at)]: recentlyPlayedTrack,
     }),
     {}
   );

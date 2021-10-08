@@ -14,11 +14,19 @@ export default async function updatePlayHistory(
 
   await admin
     .database()
-    .ref(`playHistory/${user}`)
+    .ref()
     .update({
-      cursor: Date.parse(lastPlayed),
-      refresh_at: Date.parse(lastPlayed) + 60000,
-      ...updateObject,
+      [`fetchHistory/${user}`]: {
+        cursor: Date.parse(lastPlayed),
+        refresh_at: Date.parse(lastPlayed) + 60000,
+      },
+      ...Object.entries(updateObject).reduce(
+        (accumulator, [key, value]) => ({
+          ...accumulator,
+          [`playHistory/${user}/${key}`]: value,
+        }),
+        {}
+      ),
     });
 
   const endTime = performance.now();

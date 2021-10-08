@@ -30,7 +30,7 @@ export default async function updateOrCreateUser(
       logger.info("Schedule next play history request");
       await admin
         .database()
-        .ref(`playHistory/${userId}`)
+        .ref(`fetchHistory/${userId}`)
         .update({ refresh_at: Date.now() });
       logger.info("Successfully scheduled next play history request");
     }

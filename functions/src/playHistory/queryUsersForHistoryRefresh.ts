@@ -9,7 +9,7 @@ export default async function queryUsersForHistoryRefresh() {
 
   const data = await admin
     .database()
-    .ref("playHistory")
+    .ref("fetchHistory")
     .orderByChild("refresh_at")
     .endAt(Date.now())
     .once("value");

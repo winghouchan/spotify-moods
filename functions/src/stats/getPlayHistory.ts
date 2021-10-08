@@ -1,7 +1,11 @@
 import admin from "firebase-admin";
 import { logger } from "firebase-functions";
 import { performance } from "perf_hooks";
-import { UserPlayHistoryObject } from "../playHistory";
+import { PlayHistoryWithAudioFeatures } from "../playHistory";
+
+interface UserFetchHistoryObject {
+  [key: string]: PlayHistoryWithAudioFeatures;
+}
 
 export default async function getPlayHistory({
   start,
@@ -20,10 +24,10 @@ export default async function getPlayHistory({
 
   const perfStartTime = performance.now();
 
-  const playHistory: UserPlayHistoryObject["history"] = (
+  const playHistory: UserFetchHistoryObject = (
     await admin
       .database()
-      .ref(`playHistory/${userId}/history`)
+      .ref(`playHistory/${userId}`)
       .orderByKey()
       .startAt(`${start}`)
       .endAt(`${end}`)
