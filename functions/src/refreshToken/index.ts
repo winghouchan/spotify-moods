@@ -1,7 +1,7 @@
 import admin from "firebase-admin";
 import * as functions from "firebase-functions";
 import spotify from "../spotify";
-import { Awaited } from "../utils";
+import revokeTokens from "./revokeTokens";
 
 /**
  * Refreshes Spotify access token
@@ -63,12 +63,7 @@ const refreshToken = functions.pubsub
                 }, revoking application refresh token and removing Spotify token record`
               );
 
-              await admin.auth().revokeRefreshTokens(userId);
-              await admin.database().ref(`/tokens/${userId}`).remove();
-
-              functions.logger.log(
-                "Successfully revoked application refresh token and removed Spotify token record"
-              );
+            await revokeTokens(userId);
 
               return;
             }
