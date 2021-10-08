@@ -1,5 +1,6 @@
 import admin from "firebase-admin";
 import { logger } from "firebase-functions";
+import { performance } from "perf_hooks";
 import { UserPlayHistoryObject } from "../playHistory";
 
 export default async function getPlayHistory({
@@ -11,7 +12,13 @@ export default async function getPlayHistory({
   end: number;
   userId: string;
 }) {
-  logger.log("Reading user's play history");
+  logger.info(
+    `Querying user's play history from ${new Date(
+      start
+    ).toISOString()} to ${new Date(end).toISOString()}`
+  );
+
+  const perfStartTime = performance.now();
 
   const playHistory: UserPlayHistoryObject["history"] = (
     await admin
@@ -23,7 +30,15 @@ export default async function getPlayHistory({
       .once("value")
   ).val();
 
-  logger.log("Successfully read user's play history");
+  const perfEndTime = performance.now();
+
+  logger.info(
+    `Successfully queried user's play history, found ${
+      playHistory ? Object.values(playHistory).length : 0
+    } records from ${new Date(start).toISOString()} to ${new Date(
+      end
+    ).toISOString()}, took ${perfEndTime - perfStartTime} ms`
+  );
 
   return playHistory;
 }

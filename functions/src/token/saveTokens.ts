@@ -1,5 +1,6 @@
 import admin from "firebase-admin";
 import { logger } from "firebase-functions";
+import { performance } from "perf_hooks";
 import spotify from "../spotify";
 import { Awaited } from "../utils";
 
@@ -7,7 +8,9 @@ export default async function saveTokens(
   userId: string,
   data: Awaited<ReturnType<typeof spotify.authorizationCodeGrant>>["body"]
 ) {
-  logger.log("Saving Spotify tokens");
+  logger.info("Saving Spotify tokens");
+
+  const startTime = performance.now();
 
   await admin
     .database()
@@ -17,5 +20,7 @@ export default async function saveTokens(
       refresh_at: Date.now() + data.expires_in * 1000,
     });
 
-  logger.log("Successfully saved Spotify tokens");
+  const endTime = performance.now();
+
+  logger.info(`Successfully saved Spotify tokens, ${endTime - startTime} ms`);
 }

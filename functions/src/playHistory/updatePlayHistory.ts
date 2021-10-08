@@ -1,5 +1,6 @@
 import admin from "firebase-admin";
 import { logger } from "firebase-functions";
+import { performance } from "perf_hooks";
 import { PlayHistoryWithAudioFeatures } from ".";
 
 export default async function updatePlayHistory(
@@ -7,7 +8,9 @@ export default async function updatePlayHistory(
   lastPlayed: string,
   updateObject: { [key: string]: PlayHistoryWithAudioFeatures }
 ) {
-  logger.log("Updating cursor, play history and next refresh timestamp");
+  logger.info("Updating cursor, play history and next refresh timestamp");
+
+  const startTime = performance.now();
 
   await admin
     .database()
@@ -18,7 +21,11 @@ export default async function updatePlayHistory(
       ...updateObject,
     });
 
-  logger.log(
-    "Successfully updated cursor, play history and next refresh timestamp"
+  const endTime = performance.now();
+
+  logger.info(
+    `Successfully updated cursor, play history and next refresh timestamp, took ${
+      endTime - startTime
+    } ms`
   );
 }
