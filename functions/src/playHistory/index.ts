@@ -1,6 +1,6 @@
-import admin from "firebase-admin";
 import * as functions from "firebase-functions";
 import spotify from "../spotify";
+import queryUserSpotifyAccessToken from "../utils/queryUserSpotifyAccessToken";
 import addAudioFeaturesToRecentlyPlayedTracks from "./addAudioFeaturesToRecentlyPlayedTracks";
 import buildPlayHistoryWithAudioFeaturesUpdateObject from "./buildPlayHistoryWithAudioFeaturesUpdateObject";
 import deduplicateRecentlyPlayedTrackIds from "./deduplicateRecentlyPlayedTrackIds";
@@ -39,9 +39,7 @@ const playHistory = functions.pubsub
 
       await Promise.all(
         records.map(async ([user, { cursor }]) => {
-          const { access_token } = await (
-            await admin.database().ref("tokens").child(user).once("value")
-          ).val();
+          const access_token = await queryUserSpotifyAccessToken(user);
 
           spotify.setAccessToken(access_token);
 
