@@ -13,6 +13,7 @@ import {
   startOfMonth,
   startOfYear,
 } from "date-fns";
+import { Helmet } from "react-helmet";
 import { Authenticated } from "../app/layouts";
 import Chart from "./Chart";
 import useStats from "./useStats";
@@ -138,6 +139,9 @@ function Year() {
 export default function Dashboard() {
   return (
     <Authenticated>
+      <Helmet>
+        <title>Dashboard | Spotify Moods</title>
+      </Helmet>
       <Tabs initialValue="0">
         <Tabs.Item label="Today" value="0">
           <Today />

@@ -2,6 +2,7 @@ import { Card, Code, Grid, Text } from "@geist-ui/react";
 import { getAuth, signInWithCustomToken } from "firebase/auth";
 import { getFunctions } from "firebase/functions";
 import { useCallback, useEffect } from "react";
+import { Helmet } from "react-helmet";
 import { Redirect, useHistory, useLocation } from "react-router-dom";
 import { useAuthState } from "./app/auth";
 import SpotifyLogo from "./SpotifyLogo";
@@ -66,47 +67,52 @@ function Authorize() {
   }, [authState, code, error, clientState]);
 
   return (
-    <Grid.Container height={"100%"}>
-      {authState && <Redirect to="/" />}
-      <Grid xs={0} sm={4} md={6}></Grid>
-      <Grid xs={24} sm md justify={"center"} alignItems={"center"}>
-        <Card width={"90%"}>
-          <Grid.Container gap={2} direction={"column"} alignItems={"center"}>
-            <Grid pt={2}>
-              <SpotifyLogo
-                style={{
-                  height: 50,
-                  width: 50,
-                }}
-              />
-            </Grid>
-            <Grid px={1}>
-              {!error && (
-                <Text h1 font={2}>
-                  Authorizing <br /> with Spotify
-                </Text>
-              )}
-              {error && (
-                <>
-                  <Text h1 font={2} style={{ textAlign: "center" }}>
-                    {error === "access_denied"
-                      ? "You did not grant access to your Spotify data"
-                      : "Something went wrong \xa0☹️"}
+    <>
+      <Helmet>
+        <title>Authorizing with Spotify | Spotify Moods</title>
+      </Helmet>
+      <Grid.Container height={"100%"}>
+        {authState && <Redirect to="/" />}
+        <Grid xs={0} sm={4} md={6}></Grid>
+        <Grid xs={24} sm md justify={"center"} alignItems={"center"}>
+          <Card width={"90%"}>
+            <Grid.Container gap={2} direction={"column"} alignItems={"center"}>
+              <Grid pt={2}>
+                <SpotifyLogo
+                  style={{
+                    height: 50,
+                    width: 50,
+                  }}
+                />
+              </Grid>
+              <Grid px={1}>
+                {!error && (
+                  <Text h1 font={2}>
+                    Authorizing <br /> with Spotify
                   </Text>
-                </>
-              )}
-            </Grid>
-          </Grid.Container>
-          {error && (
-            <Card.Footer>
-              <Text>Error code:</Text>
-              <Code>{error}</Code>
-            </Card.Footer>
-          )}
-        </Card>
-      </Grid>
-      <Grid xs={0} sm={4} md={6}></Grid>
-    </Grid.Container>
+                )}
+                {error && (
+                  <>
+                    <Text h1 font={2} style={{ textAlign: "center" }}>
+                      {error === "access_denied"
+                        ? "You did not grant access to your Spotify data"
+                        : "Something went wrong \xa0☹️"}
+                    </Text>
+                  </>
+                )}
+              </Grid>
+            </Grid.Container>
+            {error && (
+              <Card.Footer>
+                <Text>Error code:</Text>
+                <Code>{error}</Code>
+              </Card.Footer>
+            )}
+          </Card>
+        </Grid>
+        <Grid xs={0} sm={4} md={6}></Grid>
+      </Grid.Container>
+    </>
   );
 }
 
