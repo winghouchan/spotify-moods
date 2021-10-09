@@ -1,5 +1,5 @@
 import { useAuthState } from "../app/auth";
-import Dashboard from "./Dashboard";
+import Dashboard from "../dashboard/Dashboard";
 import SignIn from "./SignIn";
 
 function Home() {

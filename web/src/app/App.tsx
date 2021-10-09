@@ -3,10 +3,10 @@ import { getAuth, connectAuthEmulator } from "firebase/auth";
 import { getFunctions, connectFunctionsEmulator } from "firebase/functions";
 import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
 import { GeistProvider, CssBaseline } from "@geist-ui/react";
-import { AuthenticatedRoute } from "./app/routing";
-import Authorize from "./Authorize";
-import { Home } from "./home";
-import { ThemeContext, useTheme } from "./app/theme";
+import { AuthenticatedRoute } from "./routing";
+import { Authorizing } from "./auth";
+import { Home } from "../home";
+import { ThemeContext, useTheme } from "./theme";
 
 initializeApp({
   apiKey: "AIzaSyAXsuR4q-MGmmSmgeSqPD7P-_MLc1rVE60",
@@ -36,11 +36,8 @@ function App() {
         <CssBaseline />
         <Router>
           <Switch>
-            <AuthenticatedRoute path="/authenticated">
-              <div>You should be authenticated</div>
-            </AuthenticatedRoute>
             <Route path="/signin">
-              <Authorize />
+              <Authorizing />
             </Route>
             <Route path="/">
               <Home />

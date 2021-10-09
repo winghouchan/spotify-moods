@@ -4,10 +4,10 @@ import { getFunctions } from "firebase/functions";
 import { useCallback, useEffect } from "react";
 import { Helmet } from "react-helmet";
 import { Redirect, useHistory, useLocation } from "react-router-dom";
-import { useAuthState } from "./app/auth";
-import SpotifyLogo from "./SpotifyLogo";
+import { useAuthState } from ".";
+import SpotifyLogo from "../icons/SpotifyLogo";
 
-function Authorize() {
+function Authorizing() {
   const authState = useAuthState();
   const history = useHistory();
   const urlParams = new URLSearchParams(useLocation().search);
@@ -116,4 +116,4 @@ function Authorize() {
   );
 }
 
-export default Authorize;
+export default Authorizing;

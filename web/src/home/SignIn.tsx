@@ -2,7 +2,7 @@ import { Button, Grid, Text } from "@geist-ui/react";
 import { Helmet } from "react-helmet";
 import { useCallback } from "react";
 import { useHistory } from "react-router-dom";
-import SpotifyLogo from "../SpotifyLogo";
+import SpotifyLogo from "../app/icons/SpotifyLogo";
 
 export default function SignIn() {
   const history = useHistory();

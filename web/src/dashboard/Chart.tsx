@@ -102,7 +102,6 @@ export default function Chart({ data, x, y }: ChartProps) {
   return (
     <VictoryChart
       domain={{ x: [x.label[0], x.label[x.label.length - 1]] }}
-      // domainPadding={50}
       theme={theme === "dark" ? darkTheme : lightTheme}
     >
       <VictoryAxis tickValues={x.label} tickFormat={x.format} />
