@@ -1,17 +1,14 @@
 import { logger, pubsub } from "firebase-functions";
 import spotify from "../spotify";
 import queryUserSpotifyAccessToken from "../utils/queryUserSpotifyAccessToken";
-import addAudioFeaturesToRecentlyPlayedTracks from "./addAudioFeaturesToRecentlyPlayedTracks";
-import buildPlayHistoryWithAudioFeaturesUpdateObject from "./buildPlayHistoryWithAudioFeaturesUpdateObject";
+import buildAudioFeatureHistoryUpdateObject from "./buildAudioFeatureHistoryUpdateObject";
+import buildPlayHistoryUpdateObject from "./buildPlayHistoryWithAudioFeaturesUpdateObject";
+import buildValenceHistoryUpdateObject from "./buildValenceHistoryUpdateObject";
 import deduplicateRecentlyPlayedTrackIds from "./deduplicateRecentlyPlayedTrackIds";
 import getAudioFeatures from "./getAudioFeatures";
 import getMyRecentlyPlayedTracks from "./getRecentlyPlayedTracks";
 import queryUsersForHistoryRefresh from "./queryUsersForHistoryRefresh";
 import updatePlayHistory from "./updatePlayHistory";
-
-export type PlayHistoryWithAudioFeatures = SpotifyApi.PlayHistoryObject & {
-  audio_features?: SpotifyApi.AudioFeaturesObject;
-};
 
 interface UserFetchHistoryObject {
   cursor?: number;
@@ -47,26 +44,28 @@ const playHistory = pubsub.schedule("every 1 minutes").onRun(async () => {
           const deduplicatedRecentlyPlayedTrackFeatures =
             await getAudioFeatures(deduplicatedRecentlyPlayedTrackIds);
 
-          const recentlyPlayedTracksWithAudioFeaturesArray =
-            addAudioFeaturesToRecentlyPlayedTracks(
+          const audioFeaturesHistoryUpdateObject =
+            buildAudioFeatureHistoryUpdateObject(
               recentlyPlayedTracks,
               deduplicatedRecentlyPlayedTrackFeatures
-            ).sort((a, b) => Date.parse(a.played_at) - Date.parse(b.played_at));
-
-          const playHistoryWithAudioFeaturesUpdateObject =
-            buildPlayHistoryWithAudioFeaturesUpdateObject(
-              recentlyPlayedTracksWithAudioFeaturesArray
             );
 
+          const playHistoryUpdateObject =
+            buildPlayHistoryUpdateObject(recentlyPlayedTracks);
+
+          const valenceHistoryUpdateObject = buildValenceHistoryUpdateObject(
+            audioFeaturesHistoryUpdateObject
+          );
+
           const lastPlayed =
-            recentlyPlayedTracksWithAudioFeaturesArray[
-              recentlyPlayedTracksWithAudioFeaturesArray.length - 1
-            ].played_at;
+            recentlyPlayedTracks[recentlyPlayedTracks.length - 1].played_at;
 
           await updatePlayHistory(
             user,
             lastPlayed,
-            playHistoryWithAudioFeaturesUpdateObject
+            playHistoryUpdateObject,
+            audioFeaturesHistoryUpdateObject,
+            valenceHistoryUpdateObject
           );
         }
       })

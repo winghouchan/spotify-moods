@@ -1,7 +1,5 @@
-import { PlayHistoryWithAudioFeatures } from ".";
-
-export default function buildPlayHistoryWithAudioFeaturesUpdateObject(
-  array: PlayHistoryWithAudioFeatures[]
+export default function buildPlayHistoryUpdateObject(
+  array: SpotifyApi.PlayHistoryObject[]
 ) {
   return array.reduce(
     (accumulator, recentlyPlayedTrack) => ({

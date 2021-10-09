@@ -26,5 +26,7 @@ export default async function getRecentlyPlayedTracks(cursor?: number) {
     } recently played tracks from Spotify, took ${endTime - startTime} ms`
   );
 
-  return recentlyPlayedTracks;
+  return recentlyPlayedTracks.sort(
+    (a, b) => Date.parse(a.played_at) - Date.parse(b.played_at)
+  );
 }

@@ -1,13 +1,12 @@
 import admin from "firebase-admin";
 import { logger } from "firebase-functions";
 import { performance } from "perf_hooks";
-import { PlayHistoryWithAudioFeatures } from "../playHistory";
 
 interface UserFetchHistoryObject {
-  [key: string]: PlayHistoryWithAudioFeatures;
+  [key: string]: number;
 }
 
-export default async function getPlayHistory({
+export default async function getValenceHistory({
   start,
   end,
   userId,
@@ -17,17 +16,17 @@ export default async function getPlayHistory({
   userId: string;
 }) {
   logger.info(
-    `Querying user's play history from ${new Date(
+    `Querying user's valence history from ${new Date(
       start
     ).toISOString()} to ${new Date(end).toISOString()}`
   );
 
   const perfStartTime = performance.now();
 
-  const playHistory: UserFetchHistoryObject = (
+  const valenceHistory: UserFetchHistoryObject = (
     await admin
       .database()
-      .ref(`playHistory/${userId}`)
+      .ref(`valenceHistory/${userId}`)
       .orderByKey()
       .startAt(`${start}`)
       .endAt(`${end}`)
@@ -37,12 +36,12 @@ export default async function getPlayHistory({
   const perfEndTime = performance.now();
 
   logger.info(
-    `Successfully queried user's play history, found ${
-      playHistory ? Object.values(playHistory).length : 0
+    `Successfully queried user's valence history, found ${
+      valenceHistory ? Object.values(valenceHistory).length : 0
     } records from ${new Date(start).toISOString()} to ${new Date(
       end
     ).toISOString()}, took ${perfEndTime - perfStartTime} ms`
   );
 
-  return playHistory;
+  return valenceHistory;
 }

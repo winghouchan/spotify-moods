@@ -1,5 +1,11 @@
 {
   "rules": {
+    "audioFeatureHistory": {
+      "$uid": {
+        ".read": "$uid === auth.uid",
+        ".write": "$uid === auth.uid"
+      }
+    },
     "fetchHistory": {
       ".indexOn": "refresh_at",
       "$uid": {
@@ -15,6 +21,12 @@
     },
     "tokens": {
       ".indexOn": "refresh_at",
+      "$uid": {
+        ".read": "$uid === auth.uid",
+        ".write": "$uid === auth.uid"
+      }
+    },
+    "valenceHistory": {
       "$uid": {
         ".read": "$uid === auth.uid",
         ".write": "$uid === auth.uid"

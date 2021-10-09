@@ -12,8 +12,7 @@ import {
 } from "date-fns";
 import { https, logger } from "firebase-functions";
 import { mean, median, mode } from "mathjs";
-import { PlayHistoryWithAudioFeatures } from "../playHistory";
-import getPlayHistory from "./getPlayHistory";
+import getValenceHistory from "./getValenceHistory";
 
 interface RequestData {
   start?: number;
@@ -60,18 +59,18 @@ const stats = https.onCall(async (data: RequestData | null, context) => {
   const end = typeof data?.end === "number" ? data.end : Date.now();
 
   if (userId) {
-    const playHistory = await getPlayHistory({
+    const valenceHistory = await getValenceHistory({
       start,
       end,
       userId,
     });
 
-    if (playHistory) {
+    if (valenceHistory) {
       logger.info("Calculating statistics");
 
-      const valence = Object.values<PlayHistoryWithAudioFeatures>(playHistory)
-        .map(({ audio_features }) => audio_features?.valence)
-        .filter((valence): valence is number => valence !== undefined);
+      const valence = Object.values<number | undefined>(valenceHistory).filter(
+        (valence): valence is number => valence !== undefined
+      );
 
       const periodStats = {
         max: Math.max(...valence),
@@ -82,20 +81,20 @@ const stats = https.onCall(async (data: RequestData | null, context) => {
       };
 
       if (intervalParam) {
-        const timestamps = Object.keys(playHistory);
+        const timestamps = Object.keys(valenceHistory);
 
         const intervalStats = startIntervalFn[intervalParam]({
           start: Number(timestamps[0]),
           end: Number(timestamps[timestamps.length - 1]),
         }).map((interval) => {
-          const valenceInInterval = Object.entries(playHistory)
+          const valenceInInterval = Object.entries(valenceHistory)
             .filter(([key]) =>
               isWithinInterval(Number(key), {
                 start: interval,
                 end: endIntervalFn[intervalParam](interval),
               })
             )
-            .map(([, { audio_features }]) => audio_features?.valence)
+            .map(([, valence]) => valence)
             .filter((valence): valence is number => valence !== undefined);
 
           return {

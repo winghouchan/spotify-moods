@@ -12,8 +12,10 @@ const deleteUser = auth.user().onDelete(async (user) => {
 
   Promise.all([
     await admin.database().ref(`tokens/${user.uid}`).remove(),
+    await admin.database().ref(`audioFeatureHistory/${user.uid}`).remove(),
     await admin.database().ref(`fetchHistory/${user.uid}`).remove(),
     await admin.database().ref(`playHistory/${user.uid}`).remove(),
+    await admin.database().ref(`valenceHistory/${user.uid}`).remove(),
   ]);
 
   const endTime = performance.now();
