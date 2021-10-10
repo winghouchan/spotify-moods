@@ -1,5 +1,7 @@
 import { Avatar, Grid, Link, Page, Popover, Text, User } from "@geist-ui/react";
 import { deleteUser, getAuth, signOut } from "firebase/auth";
+import { useEffect } from "react";
+import { useState } from "react";
 import { MouseEvent, PropsWithChildren, useCallback, useContext } from "react";
 import ThemeContext from "../theme/ThemeContext";
 import { useUser } from "../user";
@@ -48,8 +50,25 @@ function PopoverMenu() {
   );
 }
 
+function useCurrentHour() {
+  const [state, setState] = useState(new Date().getHours());
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setState(new Date().getHours());
+    }, 1000);
+    return () => clearInterval(interval);
+  }, []);
+
+  return state;
+}
+
 export default function Authenticated({ children }: AuthenticatedLayoutProps) {
-  const currentHour = new Date().getHours();
+  const currentHour = useCurrentHour();
+  const isMorning = currentHour >= 3 && currentHour < 12;
+  const isAfternoon = currentHour >= 12 && currentHour < 17;
+  const isEvening = currentHour >= 17 && currentHour < 21;
+  const isNight = currentHour >= 21 || currentHour < 3;
   const user = useUser();
 
   return (
@@ -60,13 +79,13 @@ export default function Authenticated({ children }: AuthenticatedLayoutProps) {
           <Grid.Container>
             <Grid xs={15} sm={18} pl={1} alignItems={"center"}>
               <Text h1 font={2}>
-                {currentHour >= 3 && currentHour < 12
+                {isMorning
                   ? "Good morning"
-                  : currentHour >= 12 && currentHour < 17
+                  : isAfternoon
                   ? "Good afternoon"
-                  : currentHour >= 17 && currentHour < 21
+                  : isEvening
                   ? "Good evening"
-                  : currentHour >= 21 || currentHour < 3
+                  : isNight
                   ? "Good night"
                   : "Hello"}
               </Text>
