@@ -18,6 +18,31 @@ import { Authenticated } from "../app/layouts";
 import Chart from "./Chart";
 import useStats from "./useStats";
 
+function AllTime() {
+  const data = useStats({ interval: "hour" });
+
+  return data ? (
+    <Chart
+      data={data.interval}
+      x={{
+        data: ({ interval, mean }: any) => (mean === null ? null : interval),
+        label: eachDayOfInterval({
+          start: data.interval[0].interval,
+          end: Number(endOfToday()),
+        }),
+        format: (tick: any) => format(tick, "dd-MM"),
+      }}
+      y={{
+        data: ({ mean }: any) => mean,
+        label: [0, 0.2, 0.4, 0.6, 0.8, 1],
+        format: (tick: number) => tick.toFixed(1),
+      }}
+    />
+  ) : (
+    <Spinner />
+  );
+}
+
 function Today() {
   const data = useStats({ start: Number(startOfToday()), interval: "hour" });
 
@@ -143,16 +168,19 @@ export default function Dashboard() {
         <title>Dashboard | Spotify Moods</title>
       </Helmet>
       <Tabs initialValue="0">
-        <Tabs.Item label="Today" value="0">
+        <Tabs.Item label="All time" value="0">
+          <AllTime />
+        </Tabs.Item>
+        <Tabs.Item label="Today" value="1">
           <Today />
         </Tabs.Item>
-        <Tabs.Item label="Week" value="1">
+        <Tabs.Item label="Week" value="2">
           <Week />
         </Tabs.Item>
-        <Tabs.Item label="Month" value="2">
+        <Tabs.Item label="Month" value="3">
           <Month />
         </Tabs.Item>
-        <Tabs.Item label="Year" value="3">
+        <Tabs.Item label="Year" value="4">
           <Year />
         </Tabs.Item>
       </Tabs>
