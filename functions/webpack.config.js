@@ -39,7 +39,9 @@ module.exports = {
   },
 
   plugins: [
-    new DotenvWebpack(),
+    new DotenvWebpack({
+      systemvars: true,
+    }),
     new webpack.SourceMapDevToolPlugin({ filename: "index.js.map" }),
   ],
 
